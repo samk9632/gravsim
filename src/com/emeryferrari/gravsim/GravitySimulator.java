@@ -85,9 +85,9 @@ public class GravitySimulator extends JComponent {
 		graphics.setColor(Color.BLACK);
 		graphics.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 		if (!boolTest) {
-			for (int x = 0; x <= xLength; x += 10) {
-				for (int y = 0; y <= yLength; y += 10) {
-					for (int z = 0; z <= zLength; z += 10) {
+			for (double x = 0; x <= xLength; x += 10) {
+				for (double y = 0; y <= yLength; y += 10) {
+					for (double z = 0; z <= zLength; z += 10) {
 						k = Math.random();
 						if (k >= 1-rarity && Math.sqrt(Math.pow(x/200-1, 2) + Math.pow(y/200-1, 2) + Math.pow(z/200-1, 2)) <= 1 && sphereMode) {
 							if (!bigBang) {
