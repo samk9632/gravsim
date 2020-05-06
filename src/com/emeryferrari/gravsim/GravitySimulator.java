@@ -4,6 +4,66 @@ import java.awt.*;
 import java.math.*;
 public class GravitySimulator extends JComponent {
 	private static final long serialVersionUID = 1L;
+	double camDist = 5.0;
+	double xLength = 400.0;
+	double yLength = 400.0;
+	double zLength = 400.0;
+	double k;
+	double sx;
+	double sy;
+	double sz;
+	int counter = -1;
+	double[] pointArrayX = new double[10000];
+	double[] pointArrayY = new double[10000];
+	double[] pointArrayZ = new double[10000];
+	double[] forceArrayX = new double[10000];
+	double[] forceArrayY = new double[10000];
+	double[] forceArrayZ = new double[10000];
+	double forceArrayXSum;
+	double forceArrayYSum;
+	double forceArrayZSum;
+	double[] totalForceX = new double[10000];
+	double[] totalForceY = new double[10000];
+	double[] totalForceZ = new double[10000];
+	double[] initVelocityX = new double[10000];
+	double[] initVelocityY = new double[10000];
+	double[] initVelocityZ = new double[10000];
+	double initVelocityStrength = 0.5;
+	double gForce = 10.0;
+	double gDampEffect = 0.0;
+	double t = 0;
+	double[] massArray = new double[10000];
+	double massStrength = 0.0;
+	boolean boolTest = false;
+	boolean distanceLimitCon = false;
+	double distanceLimit = 50.0;
+	double rarity = 0.001;
+	boolean halt = false;
+	double lineCutoff = 0.125;
+	double distMitigator = 0.05;
+	boolean bigBang = true;
+	double emitSpeed = 0.0;
+	double initSize = 5.0;
+	boolean shellVelocity = false;
+	boolean shell = false;
+	boolean sphereMode = true;
+	double spin = 0.0;
+	double spinPow = 1.0;
+	boolean cells = true;
+	double[] cellArrayX = new double[10000];
+	boolean[] cellArrayXTest = new boolean[10000];
+	double[] cellArrayY = new double[10000];
+	boolean[] cellArrayYTest = new boolean[10000];
+	double[] cellArrayZ = new double[10000];
+	boolean[] cellArrayZTest = new boolean[10000];
+	double[] cellMass = new double[10000];
+	double cellSize = 1.0;
+	double minDist = 1.0;
+	double[] sortDistArray = new double[10000];
+	boolean densityDisplay = true;
+	double whiteStrength = 25.0;
+	double unitSize = 25.0;
+	boolean useLines = false;
 	JFrame frame;
 	public static void main(String[] args) {
 		new GravitySimulator().start();
@@ -22,66 +82,6 @@ public class GravitySimulator extends JComponent {
 	}
 	@Override
 	public void paintComponent(Graphics graphics) {
-		double camDist = 5.0;
-		double xLength = 400.0;
-		double yLength = 400.0;
-		double zLength = 400.0;
-		double k;
-		double sx;
-		double sy;
-		double sz;
-		int counter = -1;
-		double[] pointArrayX = new double[10000];
-		double[] pointArrayY = new double[10000];
-		double[] pointArrayZ = new double[10000];
-		double[] forceArrayX = new double[10000];
-		double[] forceArrayY = new double[10000];
-		double[] forceArrayZ = new double[10000];
-		double forceArrayXSum;
-		double forceArrayYSum;
-		double forceArrayZSum;
-		double[] totalForceX = new double[10000];
-		double[] totalForceY = new double[10000];
-		double[] totalForceZ = new double[10000];
-		double[] initVelocityX = new double[10000];
-		double[] initVelocityY = new double[10000];
-		double[] initVelocityZ = new double[10000];
-		double initVelocityStrength = 0.5;
-		double gForce = 10.0;
-		double gDampEffect = 0.0;
-		double t = 0;
-		double[] massArray = new double[10000];
-		double massStrength = 0.0;
-		boolean boolTest = false;
-		boolean distanceLimitCon = false;
-		double distanceLimit = 50.0;
-		double rarity = 0.001;
-		boolean halt = true;
-		double lineCutoff = 0.125;
-		double distMitigator = 0.05;
-		boolean bigBang = true;
-		double emitSpeed = 0.0;
-		double initSize = 5.0;
-		boolean shellVelocity = false;
-		boolean shell = false;
-		boolean sphereMode = true;
-		double spin = 0.0;
-		double spinPow = 1.0;
-		boolean cells = true;
-		double[] cellArrayX = new double[10000];
-		boolean[] cellArrayXTest = new boolean[10000];
-		double[] cellArrayY = new double[10000];
-		boolean[] cellArrayYTest = new boolean[10000];
-		double[] cellArrayZ = new double[10000];
-		boolean[] cellArrayZTest = new boolean[10000];
-		double[] cellMass = new double[10000];
-		double cellSize = 1.0;
-		double minDist = 1.0;
-		double[] sortDistArray = new double[10000];
-		boolean densityDisplay = true;
-		double whiteStrength = 25.0;
-		double unitSize = 25.0;
-		boolean useLines = false;
 		if (!boolTest) {
 			for (int x = 0; x <= xLength; x += 10) {
 				for (int y = 0; y <= yLength; y += 10) {
@@ -182,10 +182,16 @@ public class GravitySimulator extends JComponent {
 								}
 							}
 						}
-						counter = 0;
-						initVelocityX[counter] += pointArrayZ[counter]/initSize*spin/Math.pow((Math.sqrt(Math.pow(pointArrayX[counter], 2) + Math.pow(pointArrayZ[counter], 2)))+0.05, spinPow);
-						initVelocityZ[counter] -= pointArrayX[counter]/initSize*spin/Math.pow((Math.sqrt(Math.pow(pointArrayX[counter], 2) + Math.pow(pointArrayZ[counter], 2)))+0.05, spinPow);
-						cellMass[counter] = 0;
+						if (counter > -1) {
+							initVelocityX[counter] += pointArrayZ[counter]/initSize*spin/Math.pow((Math.sqrt(Math.pow(pointArrayX[counter], 2) + Math.pow(pointArrayZ[counter], 2)))+0.05, spinPow);
+							initVelocityZ[counter] -= pointArrayX[counter]/initSize*spin/Math.pow((Math.sqrt(Math.pow(pointArrayX[counter], 2) + Math.pow(pointArrayZ[counter], 2)))+0.05, spinPow);
+							cellMass[counter] = 0;
+						} else {
+							counter++;
+							initVelocityX[counter] += pointArrayZ[counter]/initSize*spin/Math.pow((Math.sqrt(Math.pow(pointArrayX[counter], 2) + Math.pow(pointArrayZ[counter], 2)))+0.05, spinPow);
+							initVelocityZ[counter] -= pointArrayX[counter]/initSize*spin/Math.pow((Math.sqrt(Math.pow(pointArrayX[counter], 2) + Math.pow(pointArrayZ[counter], 2)))+0.05, spinPow);
+							cellMass[counter] = 0;
+						}
 					}
 				}
 			}
@@ -205,7 +211,6 @@ public class GravitySimulator extends JComponent {
 		    massArray[counter+2] = 1;
 		    massArray[counter+3] = 1;
 		    massArray[counter+3] = 1;
-		    boolTest = true;
 		}
 		double distance;
 		if (!halt) {
@@ -272,15 +277,15 @@ public class GravitySimulator extends JComponent {
 		double[] faceDirX = {};
 		double[] faceDirY = {};
 		double[] faceDirZ = {};
-		double[] storageX = {};
-		double[] storageY = {};
-		double[] dist = {};
+		double[] storageX = new double[10000];
+		double[] storageY = new double[10000];
+		double[] dist = new double[10000];
 		double camPosX;
 		double camPosY;
 		double camPosZ;
 		double perspectiveStrength = 0.0;
 		double viewAngle = 0.56;
-		double[] camScale = {};
+		double[] camScale = new double[10000];
 		double scale = 125.0;
 		double sensitivity = 125.0;
 		double x;
