@@ -8,7 +8,7 @@ public class GravitySimulator extends JComponent {
 	double xLength = 400.0;
 	double yLength = 400.0;
 	double zLength = 400.0;
-	double k;
+	double k = 0;
 	double sx;
 	double sy;
 	double sz;
@@ -28,7 +28,7 @@ public class GravitySimulator extends JComponent {
 	double[] initVelocityX = new double[10000];
 	double[] initVelocityY = new double[10000];
 	double[] initVelocityZ = new double[10000];
-	double initVelocityStrength = 0.5;
+	double initVelocityStrength = 0.1;
 	double gForce = 10.0;
 	double gDampEffect = 0.0;
 	double t = 0;
@@ -37,11 +37,11 @@ public class GravitySimulator extends JComponent {
 	boolean boolTest = false;
 	boolean distanceLimitCon = false;
 	double distanceLimit = 50.0;
-	double rarity = 0.001;
+	double rarity = 0.1;
 	boolean halt = false;
 	double lineCutoff = 0.125;
 	double distMitigator = 1.0;
-	boolean bigBang = true;
+	boolean bigBang = false;
 	double emitSpeed = 0.0;
 	double initSize = 5.0;
 	boolean shellVelocity = false;
@@ -49,7 +49,7 @@ public class GravitySimulator extends JComponent {
 	boolean sphereMode = true;
 	double spin = 0.0;
 	double spinPow = 1.0;
-	boolean cells = true;
+	boolean cells = false;
 	double[] cellArrayX = new double[10000];
 	boolean[] cellArrayXTest = new boolean[10000];
 	double[] cellArrayY = new double[10000];
@@ -197,7 +197,7 @@ public class GravitySimulator extends JComponent {
 					}
 				}
 			}
-			pointArrayX[counter+1] = 1;
+			/*pointArrayX[counter+1] = 1;
 			pointArrayY[counter+1] = 0;
 			pointArrayZ[counter+1] = 0;
 			pointArrayX[counter+2] = 0;
@@ -208,13 +208,14 @@ public class GravitySimulator extends JComponent {
 		    pointArrayZ[counter+3] = 1;
 		    pointArrayX[counter+4] = 0;
 		    pointArrayY[counter+4] = 0;
-		    pointArrayZ[counter+4] = 0;
+		    pointArrayZ[counter+4] = 0;*/
 		    massArray[counter+1] = 1;
 		    massArray[counter+2] = 1;
 		    massArray[counter+3] = 1;
 		    massArray[counter+3] = 1;
 		    boolTest = true;
 		}
+		
 		double distance;
 		if (!halt) {
 			for (int x = 0; x < counter; x++) {
@@ -270,6 +271,7 @@ public class GravitySimulator extends JComponent {
 				pointArrayZ[i] += initVelocityZ[i]-totalForceZ[i]/200;
 			}
 		}
+		System.out.println(pointArrayX[2]);
 		t += 0.001;
 		gForce += t*gDampEffect;
 		int[] edgeArray1 = {counter+4, counter+4, counter+4};
