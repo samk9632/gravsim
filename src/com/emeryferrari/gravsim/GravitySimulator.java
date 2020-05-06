@@ -4,7 +4,7 @@ import java.awt.*;
 import java.math.*;
 public class GravitySimulator extends JComponent {
 	private static final long serialVersionUID = 1L;
-	double camDist = 5.0;
+	double camDist = 50.0;
 	double xLength = 400.0;
 	double yLength = 400.0;
 	double zLength = 400.0;
@@ -33,14 +33,14 @@ public class GravitySimulator extends JComponent {
 	double gDampEffect = 0.0;
 	double t = 0;
 	double[] massArray = new double[10000];
-	double massStrength = 0.0;
+	double massStrength = 1.0;
 	boolean boolTest = false;
 	boolean distanceLimitCon = false;
 	double distanceLimit = 50.0;
 	double rarity = 0.001;
 	boolean halt = false;
 	double lineCutoff = 0.125;
-	double distMitigator = 0.05;
+	double distMitigator = 1.0;
 	boolean bigBang = true;
 	double emitSpeed = 0.0;
 	double initSize = 5.0;
@@ -82,6 +82,8 @@ public class GravitySimulator extends JComponent {
 	}
 	@Override
 	public void paintComponent(Graphics graphics) {
+		graphics.setColor(Color.BLACK);
+		graphics.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 		if (!boolTest) {
 			for (int x = 0; x <= xLength; x += 10) {
 				for (int y = 0; y <= yLength; y += 10) {
@@ -211,6 +213,7 @@ public class GravitySimulator extends JComponent {
 		    massArray[counter+2] = 1;
 		    massArray[counter+3] = 1;
 		    massArray[counter+3] = 1;
+		    boolTest = true;
 		}
 		double distance;
 		if (!halt) {
