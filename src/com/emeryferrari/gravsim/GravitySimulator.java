@@ -4,7 +4,7 @@ import java.awt.*;
 import java.math.*;
 public class GravitySimulator extends JComponent {
 	private static final long serialVersionUID = 1L;
-	double camDist = 50.0;
+	double camDist = 25.0;
 	double xLength = 400.0;
 	double yLength = 400.0;
 	double zLength = 400.0;
@@ -13,26 +13,26 @@ public class GravitySimulator extends JComponent {
 	double sy;
 	double sz;
 	int counter = -1;
-	double[] pointArrayX = new double[10000];
-	double[] pointArrayY = new double[10000];
-	double[] pointArrayZ = new double[10000];
-	double[] forceArrayX = new double[10000];
-	double[] forceArrayY = new double[10000];
-	double[] forceArrayZ = new double[10000];
+	double[] pointArrayX = new double[100000];
+	double[] pointArrayY = new double[100000];
+	double[] pointArrayZ = new double[100000];
+	double[] forceArrayX = new double[100000];
+	double[] forceArrayY = new double[100000];
+	double[] forceArrayZ = new double[100000];
 	double forceArrayXSum;
 	double forceArrayYSum;
 	double forceArrayZSum;
-	double[] totalForceX = new double[10000];
-	double[] totalForceY = new double[10000];
-	double[] totalForceZ = new double[10000];
-	double[] initVelocityX = new double[10000];
-	double[] initVelocityY = new double[10000];
-	double[] initVelocityZ = new double[10000];
+	double[] totalForceX = new double[100000];
+	double[] totalForceY = new double[100000];
+	double[] totalForceZ = new double[100000];
+	double[] initVelocityX = new double[100000];
+	double[] initVelocityY = new double[100000];
+	double[] initVelocityZ = new double[100000];
 	double initVelocityStrength = 0.1;
-	double gForce = 0.1;
+	double gForce = 0.25;
 	double gDampEffect = 0.0;
 	double t = 0;
-	double[] massArray = new double[10000];
+	double[] massArray = new double[100000];
 	double massStrength = 1.0;
 	boolean boolTest = false;
 	boolean distanceLimitCon = false;
@@ -46,20 +46,20 @@ public class GravitySimulator extends JComponent {
 	double initSize = 5.0;
 	boolean shellVelocity = false;
 	boolean shell = false;
-	boolean sphereMode = true;
+	boolean sphereMode = false;
 	double spin = 0.0;
 	double spinPow = 1.0;
 	boolean cells = true;
-	double[] cellArrayX = new double[10000];
-	boolean[] cellArrayXTest = new boolean[10000];
-	double[] cellArrayY = new double[10000];
-	boolean[] cellArrayYTest = new boolean[10000];
-	double[] cellArrayZ = new double[10000];
-	boolean[] cellArrayZTest = new boolean[10000];
-	double[] cellMass = new double[10000];
+	double[] cellArrayX = new double[100000];
+	boolean[] cellArrayXTest = new boolean[100000];
+	double[] cellArrayY = new double[100000];
+	boolean[] cellArrayYTest = new boolean[100000];
+	double[] cellArrayZ = new double[100000];
+	boolean[] cellArrayZTest = new boolean[100000];
+	double[] cellMass = new double[100000];
 	double cellSize = 1;
 	double minDist = 1;
-	double[] sortDistArray = new double[10000];
+	double[] sortDistArray = new double[100000];
 	boolean densityDisplay = true;
 	double whiteStrength = 12.5;
 	double unitSize = 10.0;
@@ -136,7 +136,7 @@ public class GravitySimulator extends JComponent {
 									initVelocityZ[counter] = initVelocityStrength*pointArrayZ[counter];
 								}
 							}
-						} else if (!sphereMode && k >= 1-rarity && Math.abs(y-200) <= 200 && Math.abs(z-200) <= 200 && Math.abs(x-200) <= 200) {
+						} else if (!sphereMode && k >= 1-rarity && Math.abs(x-xLength/2) <= xLength/2 && Math.abs(y-yLength/2) <= yLength/2 && Math.abs(z-zLength/2) <= zLength/2) {
 							if (!bigBang) {
 								counter++;
 								if (!shell) {
@@ -276,9 +276,9 @@ public class GravitySimulator extends JComponent {
 		gForce += t*gDampEffect;
 		int[] edgeArray1 = {counter+4, counter+4, counter+4};
 		int[] edgeArray2 = {counter+1, counter+2, counter+3};
-		double[] storageX = new double[10000];
-		double[] storageY = new double[10000];
-		double[] dist = new double[10000];
+		double[] storageX = new double[100000];
+		double[] storageY = new double[100000];
+		double[] dist = new double[100000];
 		double camPosX;
 		double camPosY;
 		double camPosZ;
@@ -329,12 +329,16 @@ public class GravitySimulator extends JComponent {
 		}
 		sortDistArray = dist;
 		for (int xx = 0; xx < counter; xx++) {
-			if (!densityDisplay) {
-				graphics.fillOval((int)storageX[(int)sortDistArray[xx]], (int)storageY[(int)sortDistArray[xx]], 5, 5);
+			if (dist[xx] < camDist && Math.sqrt((pointArrayX[xx])*(pointArrayX[xx])+(pointArrayY[xx])*(pointArrayY[xx])+(pointArrayZ[xx])*(pointArrayZ[xx])) > camDist) {
+				
 			} else {
-				for (int yy = 1; yy < 6; yy++) {
-					graphics.setColor(new Color(255, 255, 255, (int)(massArray[xx]*whiteStrength*Math.pow(yy, 1)/Math.pow(6, 1))));
-					graphics.fillOval((int)(storageX[xx]+unitSize/2*(6-yy)/camScale[xx]), (int)(storageY[xx]+unitSize/2*(6-yy)/camScale[xx]), (int)(unitSize*yy/camScale[xx]), (int)(unitSize*yy/camScale[xx]));
+				if (!densityDisplay) {
+					graphics.fillOval((int)storageX[(int)sortDistArray[xx]], (int)storageY[(int)sortDistArray[xx]], 5, 5);
+				} else {
+					for (int yy = 1; yy < 6; yy++) {
+						graphics.setColor(new Color(255, 255, 255, (int)(massArray[xx]*whiteStrength*Math.pow(yy, 1)/Math.pow(6, 1))));
+						graphics.fillOval((int)(storageX[xx]+unitSize/2*(6-yy)/camScale[xx]), (int)(storageY[xx]+unitSize/2*(6-yy)/camScale[xx]), (int)(unitSize*yy/camScale[xx]), (int)(unitSize*yy/camScale[xx]));
+					}
 				}
 			}
 		}
@@ -377,6 +381,7 @@ public class GravitySimulator extends JComponent {
 			    fps++;
 			    if (lastFpsTime >= 1000000000) {
 			    	System.out.println("FPS: " + fps);
+			    	System.out.println(counter);
 			        lastFpsTime = 0;
 			        fps = 0;
 			    }
