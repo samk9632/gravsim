@@ -29,7 +29,7 @@ public class GravitySimulator extends JComponent {
 	double[] initVelocityY = new double[10000];
 	double[] initVelocityZ = new double[10000];
 	double initVelocityStrength = 0.1;
-	double gForce = 10.0;
+	double gForce = 0.1;
 	double gDampEffect = 0.0;
 	double t = 0;
 	double[] massArray = new double[10000];
@@ -41,7 +41,7 @@ public class GravitySimulator extends JComponent {
 	boolean halt = false;
 	double lineCutoff = 0.125;
 	double distMitigator = 1.0;
-	boolean bigBang = false;
+	boolean bigBang = true;
 	double emitSpeed = 0.0;
 	double initSize = 5.0;
 	boolean shellVelocity = false;
@@ -49,7 +49,7 @@ public class GravitySimulator extends JComponent {
 	boolean sphereMode = true;
 	double spin = 0.0;
 	double spinPow = 1.0;
-	boolean cells = false;
+	boolean cells = true;
 	double[] cellArrayX = new double[10000];
 	boolean[] cellArrayXTest = new boolean[10000];
 	double[] cellArrayY = new double[10000];
@@ -57,12 +57,12 @@ public class GravitySimulator extends JComponent {
 	double[] cellArrayZ = new double[10000];
 	boolean[] cellArrayZTest = new boolean[10000];
 	double[] cellMass = new double[10000];
-	double cellSize = 1.0;
-	double minDist = 1.0;
+	double cellSize = 1;
+	double minDist = 1;
 	double[] sortDistArray = new double[10000];
 	boolean densityDisplay = true;
-	double whiteStrength = 25.0;
-	double unitSize = 25.0;
+	double whiteStrength = 12.5;
+	double unitSize = 10.0;
 	boolean useLines = false;
 	JFrame frame;
 	public static void main(String[] args) {
@@ -271,17 +271,11 @@ public class GravitySimulator extends JComponent {
 				pointArrayZ[i] += initVelocityZ[i]-totalForceZ[i]/200;
 			}
 		}
-		System.out.println(pointArrayX[2]);
+		//System.out.println(counter);
 		t += 0.001;
 		gForce += t*gDampEffect;
 		int[] edgeArray1 = {counter+4, counter+4, counter+4};
 		int[] edgeArray2 = {counter+1, counter+2, counter+3};
-		double[] faceVert1 = {};
-		double[] faceVert2 = {};
-		double[] faceVert3 = {};
-		double[] faceDirX = {};
-		double[] faceDirY = {};
-		double[] faceDirZ = {};
 		double[] storageX = new double[10000];
 		double[] storageY = new double[10000];
 		double[] dist = new double[10000];
@@ -338,17 +332,19 @@ public class GravitySimulator extends JComponent {
 			if (!densityDisplay) {
 				graphics.fillOval((int)storageX[(int)sortDistArray[xx]], (int)storageY[(int)sortDistArray[xx]], 5, 5);
 			} else {
-				for (int yy = 0; yy < 3; yy++) {
-					graphics.setColor(new Color(255, 255, 255, (int)(massArray[xx]*whiteStrength)));
-					graphics.fillOval((int)storageX[xx], (int)storageY[xx], 5, 5);
+				for (int yy = 1; yy < 6; yy++) {
+					graphics.setColor(new Color(255, 255, 255, (int)(massArray[xx]*whiteStrength*Math.pow(yy, 1)/Math.pow(6, 1))));
+					graphics.fillOval((int)(storageX[xx]+unitSize/2*(6-yy)/camScale[xx]), (int)(storageY[xx]+unitSize/2*(6-yy)/camScale[xx]), (int)(unitSize*yy/camScale[xx]), (int)(unitSize*yy/camScale[xx]));
 				}
 			}
 		}
 		graphics.setColor(Color.WHITE);
-		for (int xx = 0; xx < counter; xx++) {
-			for (int yy = 0; yy < counter; yy++) {
-				if (Math.sqrt((pointArrayX[xx]-pointArrayX[yy])*(pointArrayX[xx]-pointArrayX[yy])+(pointArrayY[xx]-pointArrayY[yy])*(pointArrayY[xx]-pointArrayY[yy])+(pointArrayZ[xx]-pointArrayZ[yy])*(pointArrayZ[xx]-pointArrayZ[yy])) < lineCutoff && useLines) {
-					graphics.drawLine((int)storageX[xx], (int)storageY[xx], (int)storageX[yy], (int)storageY[yy]);
+		if (useLines) {
+			for (int xx = 0; xx < counter; xx++) {
+				for (int yy = 0; yy < counter; yy++) {
+					if (Math.sqrt((pointArrayX[xx]-pointArrayX[yy])*(pointArrayX[xx]-pointArrayX[yy])+(pointArrayY[xx]-pointArrayY[yy])*(pointArrayY[xx]-pointArrayY[yy])+(pointArrayZ[xx]-pointArrayZ[yy])*(pointArrayZ[xx]-pointArrayZ[yy])) < lineCutoff) {
+						graphics.drawLine((int)storageX[xx], (int)storageY[xx], (int)storageX[yy], (int)storageY[yy]);
+					}
 				}
 			}
 		}
